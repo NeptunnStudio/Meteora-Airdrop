@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meteora Airdrop Checker</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .logo-top {
+            width: 120px;
+            margin-top: 20px;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+    background-color: #41C444;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+        .result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #41C444;
+            margin-top: 25px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .footer-text {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-icons a img {
+            width: 24px;
+            height: 24px;
+            filter: invert(1);
+            transition: transform 0.3s;
+        }
+
+        .social-icons a:hover img {
+            transform: scale(1.1);
+        }
+    
+@keyframes glow {
+    0% { filter: drop-shadow(0 0 5px #41C444); }
+    50% { filter: drop-shadow(0 0 20px #41C444); }
+    100% { filter: drop-shadow(0 0 5px #41C444); }
+}
+.meteora-glow {
+    animation: glow 2s infinite ease-in-out;
+}
+
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+.meteora-float-glow {
+    animation: float 3s ease-in-out infinite, glow 2s infinite ease-in-out;
+    width: 120px;
+    filter: drop-shadow(0 0 8px #FF3B3B) drop-shadow(0 0 16px #FF3B3B);
+}
+
+
+.container select, 
+.container input, 
+.container button {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+    <img class="logo-top meteora-float-glow" src="mettttt.png" alt="Meteora Logo">
+
+    <div class="container">
+        <h1>Meteora Airdrop Checker</h1>
+
+        <label for="points2024">Points 2024</label>
+        <input type="text" id="points2024" placeholder="e.g. 100,000" oninput="formatNumber(this)">
+
+        <label for="points2025">Points 2025</label>
+        <input type="text" id="points2025" placeholder="e.g. 100,000" oninput="formatNumber(this)">
+
+        <label for="marketcap">Market Cap</label>
+        <select id="marketcap" onchange="toggleCustomMarketCap(this)">
+            <option value="100000000">100M</option>
+            <option value="300000000">300M</option>
+            <option value="500000000">500M</option>
+            <option value="1000000000">1B</option>
+            <option value="1200000000">1.2B</option>
+            <option value="1500000000">1.5B</option>
+            <option value="2000000000" selected>2B</option>
+            <option value="custom">Custom</option>
+        </select>
+
+        <input type="number" id="customMarketcap" placeholder="Enter custom market cap" style="display:none" min="0" max="2000000000">
+
+        <button onclick="calculate()">Check Allocation</button>
+
+        <div class="result" id="result"></div><p style="color: #41C444; opacity: 0.2; font-size: 14px; margin-top: 20px;">
+This tool was created by community members using public data to estimate allocations.
+</p>
+    </div>
+
+    <div class="footer">
+        <div class="footer-text">Created by:</div>
+        <div class="social-icons">
+    <a href="https://x.com/AK47ven" target="_blank"><img src="twitter.gif" alt="Twitter AK47ven" width="96" height="96"></a>
+    <a href="https://x.com/_SOL_AR" target="_blank"><img src="twitter.gif" alt="Twitter SOL_AR" width="96" height="96"></a>
+</div>
+    </div>
+
+    <script>
+        const allocationPercent2024 = 0.08;
+        const allocationPercent2025 = 0.05;
+        const totalPoints2024 = 342000000000;
+        const totalPoints2025 = 543000000000;
+
+        function formatNumber(input) {
+            let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+            if (!value) return input.value = '';
+            input.value = Number(value).toLocaleString('en-US');
+        }
+
+        function parseFormattedNumber(val) {
+            return parseInt(val.replace(/,/g, '')) || 0;
+        }
+
+        function toggleCustomMarketCap(select) {
+            const customInput = document.getElementById('customMarketcap');
+            customInput.style.display = select.value === 'custom' ? 'block' : 'none';
+        }
+
+        function calculate() {
+            const points2024 = parseFormattedNumber(document.getElementById('points2024').value);
+            const points2025 = parseFormattedNumber(document.getElementById('points2025').value);
+
+            let marketCap = document.getElementById('marketcap').value;
+            if (marketCap === 'custom') {
+                marketCap = parseFloat(document.getElementById('customMarketcap').value) || 0;
+            } else {
+                marketCap = parseFloat(marketCap);
+            }
+
+            const valuePerPoint2024 = (marketCap * allocationPercent2024) / totalPoints2024;
+            const valuePerPoint2025 = (marketCap * allocationPercent2025) / totalPoints2025;
+
+            const result = (points2024 * valuePerPoint2024) + (points2025 * valuePerPoint2025);
+            const formattedResult = result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            document.getElementById('result').innerText = `Airdrop Value: $${formattedResult}`;
+        }
+    </script>
+
+</body>
+</html>
