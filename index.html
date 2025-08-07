@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,39 +7,62 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: #121212;
       margin: 0;
       padding: 2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
+      color: #fff;
     }
     .container {
-      background: white;
+      background: #1c1c1c;
       padding: 2rem;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       max-width: 500px;
       width: 100%;
     }
     h2 {
       text-align: center;
+      color: #00e676;
+      font-size: 2rem;
     }
     label {
       display: block;
       margin-top: 1rem;
+      color: #ddd;
     }
     input[type="number"], input[type="range"] {
       width: 100%;
       padding: 0.5rem;
       margin-top: 0.5rem;
+      border: 1px solid #333;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
     }
     .result {
       margin-top: 2rem;
       font-weight: bold;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
+      color: #00e676;
+      animation: fadeIn 1s ease-in-out;
     }
+    .info {
+      font-size: 0.8rem;
+      color: #bbb;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
   </style>
 </head>
 <body>
@@ -59,6 +81,10 @@
     <div class="result" id="result">
       Airdrop Value: $0.00
     </div>
+
+    <div class="info">
+      <span class="info">(*) The calculation is based on different weights for points in 2024 and 2025.</span>
+    </div>
   </div>
 
   <script>
@@ -75,20 +101,27 @@
     const mcDisplay = document.getElementById("mcDisplay");
     const resultDisplay = document.getElementById("result");
 
+    function formatNumber(number) {
+      return number.toLocaleString('it-IT'); // Format numbers with commas for thousands
+    }
+
     function calculate() {
       const userPoints2024 = parseFloat(points2024Input.value) || 0;
       const userPoints2025 = parseFloat(points2025Input.value) || 0;
       const marketCap = parseFloat(marketCapInput.value);
       const tokenPrice = marketCap / totalSupply;
 
-      mcDisplay.textContent = `$${marketCap.toLocaleString()}`;
+      mcDisplay.textContent = `$${formatNumber(marketCap)}`;
 
+      // Calculate user MET allocation for 2024 and 2025
       const userMET2024 = (userPoints2024 / totalPoints2024) * airdropSupply2024;
       const userMET2025 = (userPoints2025 / totalPoints2025) * airdropSupply2025;
       const totalUserMET = userMET2024 + userMET2025;
 
+      // Calculate Airdrop value
       const airdropValue = totalUserMET * tokenPrice;
-      resultDisplay.textContent = `Airdrop Value: $${airdropValue.toFixed(2)} (${totalUserMET.toFixed(2)} MET)`;
+
+      resultDisplay.textContent = `Airdrop Value: $${formatNumber(airdropValue.toFixed(2))} (${totalUserMET.toFixed(2)} MET)`;
     }
 
     points2024Input.addEventListener("input", calculate);
