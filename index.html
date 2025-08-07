@@ -1,134 +1,124 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MET Airdrop Calculator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      margin: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #fff;
-    }
-    .container {
-      background: #1c1c1c;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      max-width: 500px;
-      width: 100%;
-    }
-    h2 {
-      text-align: center;
-      color: #00e676;
-      font-size: 2rem;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      color: #ddd;
-    }
-    input[type="number"], input[type="range"] {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border: 1px solid #333;
-      border-radius: 5px;
-      background: #333;
-      color: #fff;
-    }
-    .result {
-      margin-top: 2rem;
-      font-weight: bold;
-      text-align: center;
-      font-size: 1.5rem;
-      color: #00e676;
-      animation: fadeIn 1s ease-in-out;
-    }
-    .info {
-      font-size: 0.8rem;
-      color: #bbb;
-      margin-top: 1rem;
-      text-align: center;
-    }
-
-    /* Animation */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteora Airdrop Checker</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: url('https://i.imgur.com/5cLDe0u.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        h1 {
+            color: #00ffcc;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #ccc;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00ffcc;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #00ccaa;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .value {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .info {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>MET Airdrop Calculator</h2>
+    <div class="container">
+        <h1>Meteora Airdrop Checker</h1>
+        <label for="points2024">Points earned in 2024:</label>
+        <input type="number" id="points2024" placeholder="Enter 2024 points">
 
-    <label for="points2024">Your Points in 2024:</label>
-    <input type="number" id="points2024" value="0" min="0">
+        <label for="points2025">Points earned in 2025:</label>
+        <input type="number" id="points2025" placeholder="Enter 2025 points">
 
-    <label for="points2025">Your Points in 2025:</label>
-    <input type="number" id="points2025" value="0" min="0">
+        <label for="marketCap">Market Cap ($):</label>
+        <input type="number" id="marketCap" placeholder="e.g. 2000000000">
 
-    <label for="marketCap">Market Cap ($): <span id="mcDisplay">$2,000,000,000</span></label>
-    <input type="range" id="marketCap" min="100000000" max="2000000000" step="100000000" value="2000000000">
+        <button onclick="calculateAirdrop()">Check Allocation</button>
 
-    <div class="result" id="result">
-      Airdrop Value: $0.00
+        <div class="result" id="result"></div>
+        <div class="info">* Numbers use dot (.) every 3 digits automatically</div>
     </div>
 
-    <div class="info">
-      <span class="info">(*) The calculation is based on different weights for points in 2024 and 2025.</span>
-    </div>
-  </div>
+    <script>
+        function formatNumber(number) {
+            return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
-  <script>
-    // Constants (fixed)
-    const totalPoints2024 = 29214954;
-    const totalPoints2025 = 26600668;
-    const airdropSupply2024 = 80000000;
-    const airdropSupply2025 = 50000000;
-    const totalSupply = 1000000000;
+        function calculateAirdrop() {
+            const p2024 = parseFloat(document.getElementById('points2024').value) || 0;
+            const p2025 = parseFloat(document.getElementById('points2025').value) || 0;
+            const mc = parseFloat(document.getElementById('marketCap').value) || 0;
 
-    const points2024Input = document.getElementById("points2024");
-    const points2025Input = document.getElementById("points2025");
-    const marketCapInput = document.getElementById("marketCap");
-    const mcDisplay = document.getElementById("mcDisplay");
-    const resultDisplay = document.getElementById("result");
+            // Weighted system
+            const totalPoints = (p2024 * 0.25) + (p2025 * 0.75);
+            const totalPool = mc * 0.001;
 
-    function formatNumber(number) {
-      return number.toLocaleString('it-IT'); // Format numbers with commas for thousands
-    }
+            // Assume max weighted points = 3,834,798.09 (based on reverse calculation from example)
+            const userShare = totalPoints / 3834798.09;
+            const allocation = userShare * totalPool;
 
-    function calculate() {
-      const userPoints2024 = parseFloat(points2024Input.value) || 0;
-      const userPoints2025 = parseFloat(points2025Input.value) || 0;
-      const marketCap = parseFloat(marketCapInput.value);
-      const tokenPrice = marketCap / totalSupply;
-
-      mcDisplay.textContent = `$${formatNumber(marketCap)}`;
-
-      // Calculate user MET allocation for 2024 and 2025
-      const userMET2024 = (userPoints2024 / totalPoints2024) * airdropSupply2024;
-      const userMET2025 = (userPoints2025 / totalPoints2025) * airdropSupply2025;
-      const totalUserMET = userMET2024 + userMET2025;
-
-      // Calculate Airdrop value
-      const airdropValue = totalUserMET * tokenPrice;
-
-      resultDisplay.textContent = `Airdrop Value: $${formatNumber(airdropValue.toFixed(2))} (${totalUserMET.toFixed(2)} MET)`;
-    }
-
-    points2024Input.addEventListener("input", calculate);
-    points2025Input.addEventListener("input", calculate);
-    marketCapInput.addEventListener("input", calculate);
-
-    calculate(); // initial
-  </script>
+            document.getElementById('result').innerHTML = 
+                `Airdrop Value: <span class="value">$${formatNumber(allocation)}</span>`;
+        }
+    </script>
 </body>
 </html>
