@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MET Airdrop Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input[type="number"], input[type="range"] {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .result {
+      margin-top: 2rem;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>MET Airdrop Calculator</h2>
+
+    <label for="points2024">Your Points in 2024:</label>
+    <input type="number" id="points2024" value="0" min="0">
+
+    <label for="points2025">Your Points in 2025:</label>
+    <input type="number" id="points2025" value="0" min="0">
+
+    <label for="marketCap">Market Cap ($): <span id="mcDisplay">$2,000,000,000</span></label>
+    <input type="range" id="marketCap" min="100000000" max="2000000000" step="100000000" value="2000000000">
+
+    <div class="result" id="result">
+      Airdrop Value: $0.00
+    </div>
+  </div>
+
+  <script>
+    // Constants (fixed)
+    const totalPoints2024 = 29214954;
+    const totalPoints2025 = 26600668;
+    const airdropSupply2024 = 80000000;
+    const airdropSupply2025 = 50000000;
+    const totalSupply = 1000000000;
+
+    const points2024Input = document.getElementById("points2024");
+    const points2025Input = document.getElementById("points2025");
+    const marketCapInput = document.getElementById("marketCap");
+    const mcDisplay = document.getElementById("mcDisplay");
+    const resultDisplay = document.getElementById("result");
+
+    function calculate() {
+      const userPoints2024 = parseFloat(points2024Input.value) || 0;
+      const userPoints2025 = parseFloat(points2025Input.value) || 0;
+      const marketCap = parseFloat(marketCapInput.value);
+      const tokenPrice = marketCap / totalSupply;
+
+      mcDisplay.textContent = `$${marketCap.toLocaleString()}`;
+
+      const userMET2024 = (userPoints2024 / totalPoints2024) * airdropSupply2024;
+      const userMET2025 = (userPoints2025 / totalPoints2025) * airdropSupply2025;
+      const totalUserMET = userMET2024 + userMET2025;
+
+      const airdropValue = totalUserMET * tokenPrice;
+      resultDisplay.textContent = `Airdrop Value: $${airdropValue.toFixed(2)} (${totalUserMET.toFixed(2)} MET)`;
+    }
+
+    points2024Input.addEventListener("input", calculate);
+    points2025Input.addEventListener("input", calculate);
+    marketCapInput.addEventListener("input", calculate);
+
+    calculate(); // initial
+  </script>
+</body>
+</html>
