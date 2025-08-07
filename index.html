@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meteora Airdrop Checker</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-size: cover;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            color: #41C444;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #41C444;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #41C444;
+            margin-top: 25px;
+        }
+
+        .logo {
+            position: absolute;
+            right: 30px;
+            bottom: 30px;
+            width: 150px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Meteora Airdrop Checker</h1>
+
+        <label for="points2024">Points 2024</label>
+        <input type="text" id="points2024" placeholder="e.g. 100,000" oninput="formatNumber(this)">
+
+        <label for="points2025">Points 2025</label>
+        <input type="text" id="points2025" placeholder="e.g. 100,000" oninput="formatNumber(this)">
+
+        <label for="marketcap">Market Cap</label>
+        <select id="marketcap" onchange="toggleCustomMarketCap(this)">
+            <option value="100000000">100M</option>
+            <option value="300000000">300M</option>
+            <option value="500000000">500M</option>
+            <option value="1000000000">1B</option>
+            <option value="1200000000">1.2B</option>
+            <option value="1500000000">1.5B</option>
+            <option value="2000000000" selected>2B</option>
+            <option value="custom">Custom</option>
+        </select>
+
+        <input type="number" id="customMarketcap" placeholder="Enter custom market cap" style="display:none" min="0" max="2000000000">
+
+        <button onclick="calculate()">Check Allocation</button>
+
+        <div class="result" id="result"></div>
+    </div>
+    <img class="logo" src="https://pbs.twimg.com/profile_images/1927657649245724672/oMq5m-RV_400x400.jpg" alt="Meteora Logo">
+
+    <script>
+        const allocationPercent2024 = 0.08;
+        const allocationPercent2025 = 0.05;
+        const totalPoints2024 = 342000000000;
+        const totalPoints2025 = 543000000000;
+
+        function formatNumber(input) {
+            let value = input.value.replace(/,/g, '').replace(/[^0-9]/g, '');
+            if (!value) return input.value = '';
+            input.value = Number(value).toLocaleString('en-US');
+        }
+
+        function parseFormattedNumber(val) {
+            return parseInt(val.replace(/,/g, '')) || 0;
+        }
+
+        function toggleCustomMarketCap(select) {
+            const customInput = document.getElementById('customMarketcap');
+            customInput.style.display = select.value === 'custom' ? 'block' : 'none';
+        }
+
+        function calculate() {
+            const points2024 = parseFormattedNumber(document.getElementById('points2024').value);
+            const points2025 = parseFormattedNumber(document.getElementById('points2025').value);
+
+            let marketCap = document.getElementById('marketcap').value;
+            if (marketCap === 'custom') {
+                marketCap = parseFloat(document.getElementById('customMarketcap').value) || 0;
+            } else {
+                marketCap = parseFloat(marketCap);
+            }
+
+            const valuePerPoint2024 = (marketCap * allocationPercent2024) / totalPoints2024;
+            const valuePerPoint2025 = (marketCap * allocationPercent2025) / totalPoints2025;
+
+            const result = (points2024 * valuePerPoint2024) + (points2025 * valuePerPoint2025);
+            const formattedResult = result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            document.getElementById('result').innerText = `Airdrop Value: $${formattedResult}`;
+        }
+    </script>
+</body>
+</html>
