@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteora Airdrop Checker</title>
+    <style>
+        /* Liquid Gradient Background */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(270deg, #ff0000, #ffa500, #ffff00);
+            background-size: 600% 600%;
+            animation: gradient 15s ease infinite;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        @keyframes gradient {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .container {
+            background-color: #000;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #fff;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #222;
+            color: #fff;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00ff00;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #00cc00;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+
+        .value {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .info {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Meteora Airdrop Checker</h1>
+
+        <label for="points2024">Points earned in 2024:</label>
+        <input type="number" id="points2024" placeholder="Enter 2024 points">
+
+        <label for="points2025">Points earned in 2025:</label>
+        <input type="number" id="points2025" placeholder="Enter 2025 points">
+
+        <label for="marketCapSelect">Select Market Cap ($):</label>
+        <select id="marketCapSelect" onchange="setMarketCapFromDropdown()">
+            <option value="">-- Choose Market Cap --</option>
+            <option value="100000000">100M</option>
+            <option value="300000000">300M</option>
+            <option value="500000000">500M</option>
+            <option value="1000000000">1B</option>
+            <option value="1200000000">1.2B</option>
+            <option value="1500000000">1.5B</option>
+            <option value="2000000000">2B</option>
+        </select>
+
+        <label for="marketCap">Or enter custom Market Cap ($):</label>
+        <input type="number" id="marketCap" placeholder="Enter Market Cap (max 2B)" min="0" max="2000000000">
+
+        <button onclick="calculateAirdrop()">Check Allocation</button>
+
+        <div class="result" id="result"></div>
+        <div class="info">* Numbers use dot (.) every 3 digits automatically</div>
+    </div>
+
+    <script>
+        function setMarketCapFromDropdown() {
+            const dropdown = document.getElementById("marketCapSelect");
+            const input = document.getElementById("marketCap");
+            input.value = dropdown.value;
+        }
+
+        function formatNumber(number) {
+            return number.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculateAirdrop() {
+            const p2024 = parseFloat(document.getElementById('points2024').value) || 0;
+            const p2025 = parseFloat(document.getElementById('points2025').value) || 0;
+            const mc = parseFloat(document.getElementById('marketCap').value) || 0;
+
+            if (mc <= 0 || mc > 2000000000) {
+                document.getElementById('result').innerHTML = `<span style="color:red;">Market Cap must be between $0 and $2B</span>`;
+                return;
+            }
+
+            const totalPoints = (p2024 * 0.25) + (p2025 * 0.75);
+            const totalPool = mc * 0.001;
+            const userShare = totalPoints / 3834798.09;
+            const allocation = userShare * totalPool;
+
+            document.getElementById('result').innerHTML = 
+                `Airdrop Value: <span class="value">$${formatNumber(allocation)}</span>`;
+        }
+    </script>
+</body>
+</html>
