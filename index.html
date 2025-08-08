@@ -162,10 +162,12 @@ This tool was created by community members using public data to estimate allocat
         <option value="1200000000">1.2B</option>
         <option value="1500000000">1.5B</option>
         <option value="2000000000" selected>2B</option>
-        <option value="custom">Custom</option>
     </select>
 
-    <input type="number" id="customMarketcap" placeholder="Enter custom market cap" style="display:none;" min="0" max="2000000000">
+    <label for="marketSlider" style="margin-top: 15px;">Adjust Market Cap ($)</label>
+    <input type="range" id="marketSlider" min="0" max="2000000000" step="50000000" value="2000000000" oninput="syncSliderToInput(this.value)">
+    <div id="sliderValue" style="margin-top: 8px; font-size: 14px; color: #ccc;">$2,000,000,000</div>
+
 
     <button onclick="calculate()">Check Allocation</button>
 
@@ -225,12 +227,7 @@ This tool was created by community members using public data to estimate allocat
         const points2024 = parseFormattedNumber(document.getElementById('points2024').value);
         const points2025 = parseFormattedNumber(document.getElementById('points2025').value);
 
-        let marketCap = document.getElementById('marketcap').value;
-        if (marketCap === 'custom') {
-            marketCap = parseFloat(document.getElementById('customMarketcap').value) || 0;
-        } else {
-            marketCap = parseFloat(marketCap);
-        }
+        let marketCap = parseFloat(document.getElementById('marketSlider').value);
 
         const valuePerPoint2024 = (marketCap * allocationPercent2024) / totalPoints2024;
         const valuePerPoint2025 = (marketCap * allocationPercent2025) / totalPoints2025;
@@ -245,6 +242,25 @@ This tool was created by community members using public data to estimate allocat
         const info = document.getElementById("infoBox");
         info.style.display = (info.style.display === "none") ? "block" : "none";
     }
+    <script>
+    const slider = document.getElementById("marketSlider");
+    const dropdown = document.getElementById("marketcap");
+    const sliderDisplay = document.getElementById("sliderValue");
+
+    function syncSliderToInput(val) {
+        const formatted = Number(val).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+        sliderDisplay.innerText = formatted;
+        calculate(); // aggiorna il risultato
+    }
+
+    dropdown.addEventListener("change", function () {
+        const selected = parseFloat(this.value);
+        if (!isNaN(selected)) {
+            slider.value = selected;
+            syncSliderToInput(selected);
+        }
+    });
+</script>
 </script>
 </body>
 </html>
